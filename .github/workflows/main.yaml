@@ -1,0 +1,59 @@
+name: Unity WebGL Build 🚀
+
+on:
+  push:
+    branches:
+      - main  # main 브랜치에 push될 때만 실행
+
+jobs:
+  build:
+    name: Build WebGL Project ✨
+    runs-on: ubuntu-latest
+    steps:
+      # ✅ 리포지토리 체크아웃
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      # ✅ Git LFS 강제 다운로드 (LFS 오류 해결)
+      - name: Setup Git LFS
+        run: |
+          git lfs install
+          git lfs pull
+
+      # ✅ 기존 Artifacts 삭제 (이전 빌드 삭제)
+      - name: Delete old artifacts
+        uses: geekyeggo/delete-artifact@v2
+        with:
+          name: WebGL-Build  # 기존 빌드 파일 삭제
+
+      # ✅ 캐싱 (속도 개선)
+      - uses: actions/cache@v3
+        with:
+          path: Library
+          key: Library-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-
+
+      # ✅ Unity WebGL 빌드 실행
+      - name: Build WebGL
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}  # 🔥 GitHub Secrets에서 불러옴
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: WebGL
+          buildName: WebGLBuild
+          outputPath: build  # 빌드 결과 폴더
+
+      # ✅ 빌드 파일을 ZIP으로 압축 (용량 절약)
+      - name: Compress Build
+        run: zip -r WebGLBuild.zip build/
+
+      # ✅ GitHub Artifacts에 업로드 (빌드 결과 저장)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: WebGL-Build
+          path: WebGLBuild.zip  # ZIP 파일 업로드
