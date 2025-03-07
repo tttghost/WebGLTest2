@@ -3,7 +3,7 @@ name: Unity WebGL Build 🚀
 on:
   push:
     branches:
-      - main  # main 브랜치에 push될 때만 실행
+      - ci-cd  # ci-cd 브랜치에 push될 때만 실행
 
 jobs:
   build:
