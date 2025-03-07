@@ -21,7 +21,7 @@ read -p "PR 제목을 입력하세요: " PR_TITLE
 read -p "PR 본문을 입력하세요: " PR_BODY
 
 # 리뷰어 지정 (쉼표로 구분)
-REVIEWERS="user1,user2,user3"  # GitHub 사용자명 입력
+REVIEWERS=""  # GitHub 사용자명 입력
 ASSIGNEE="@me"  # 본인을 Assignee로 설정 (필요 없으면 삭제 가능)
 
 # 레이블과 마일스톤 지정 (필요하면 설정)
